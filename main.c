@@ -96,17 +96,17 @@ int lsh_launch(char **args)
   pid = fork();
   if (pid == 0) {
     // Child process
-    if (execvp(args[0], args) == -1) {
+    if (execvp(args[0], args) == -1) { //očelkuje ime programa i array(vector), searches program in the path
       perror("lsh");
     }
     exit(EXIT_FAILURE);
-  } else if (pid < 0) {
+  } else if (pid < 0) { //ako fork ima error
     // Error forking
     perror("lsh");
   } else {
     // Parent process
     do {
-      waitpid(pid, &status, WUNTRACED);
+      waitpid(pid, &status, WUNTRACED); //ceka da se promini stanje procesa
     } while (!WIFEXITED(status) && !WIFSIGNALED(status));
   }
 
@@ -118,7 +118,7 @@ int lsh_launch(char **args)
    @param args Null terminated list of arguments.
    @return 1 if the shell should continue running, 0 if it should terminate
  */
-int lsh_execute(char **args)
+int lsh_execute(char **args) //check if the command equals each builtin
 {
   int i;
 
