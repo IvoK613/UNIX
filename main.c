@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 /*
   Function Declarations for builtin shell commands:
@@ -258,12 +259,32 @@ void lsh_loop(void)
    @param argv Argument vector.
    @return status code
  */
+
+ #ifndef MAX_BUF
+ #define MAX_BUF 200
+ #endif // MAX_BUF
+ int pwd(void) {
+    char path[MAX_BUF];
+    errno = 0;
+    if (getcwd(path, MAX_BUF) == NULL) {
+        if (errno == ERANGE)
+            printf("[ERROR] pathname length exceeds the buffer size\n");
+        else
+            perror("getcwd");
+        exit(EXIT_FAILURE);
+    }
+    printf("Current working directory: %s\n", path);
+
+    exit(EXIT_SUCCESS);
+ }
+
 int main(int argc, char **argv)
 {
   // Load config files, if any.
 
   // Run command loop.
   lsh_loop();
+  pwd();
 
   // Perform any shutdown/cleanup.
 
